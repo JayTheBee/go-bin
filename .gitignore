@@ -24,6 +24,9 @@ node_modules
 /frontend/src/compiler/compile/internal_exports.ts
 /frontend/compiler.d.ts
 /frontend/compiler.*js
+/frontend/build
+/frontend/.svelte-kit
+/frontend/package
 /frontend/index.*js
 /frontend/ssr.*js
 /frontend/action
@@ -40,3 +43,8 @@ _actual*.*
 _output
 /types
 .eslintcache
+.env
+.env.*
+!.env.example
+/frontend/vite.config.js.timestamp-*
+/frontend/vite.config.ts.timestamp-*
