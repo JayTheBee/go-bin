@@ -1,3 +1,4 @@
+# golang
 # Binaries for programs and plugins
 *.exe
 *.exe~
@@ -15,36 +16,25 @@
 # vendor/
 
 
-# svelte
-.idea
-.DS_Store
-.vscode
-node_modules
-*.map
-/frontend/src/compiler/compile/internal_exports.ts
-/frontend/compiler.d.ts
-/frontend/compiler.*js
+# react
+/frontend/node_modules
+/frontend/.pnp
+.pnp.js
+
+# testing
+/frontend/coverage
+
+# production
 /frontend/build
-/frontend/.svelte-kit
-/frontend/package
-/frontend/index.*js
-/frontend/ssr.*js
-/frontend/action
-/frontend/internal
-/frontend/store
-/frontend/easing
-/frontend/motion
-/frontend/transition
-/frontend/animate
-/frontend/scratch/
-/frontend/test/*/samples/_
-/frontend/yarn-error.log
-_actual*.*
-_output
-/types
-.eslintcache
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 .env
-.env.*
-!.env.example
-/frontend/vite.config.js.timestamp-*
-/frontend/vite.config.ts.timestamp-*
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
