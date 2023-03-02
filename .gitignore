@@ -13,3 +13,30 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+
+# svelte
+.idea
+.DS_Store
+.vscode
+node_modules
+*.map
+/frontend/src/compiler/compile/internal_exports.ts
+/frontend/compiler.d.ts
+/frontend/compiler.*js
+/frontend/index.*js
+/frontend/ssr.*js
+/frontend/action
+/frontend/internal
+/frontend/store
+/frontend/easing
+/frontend/motion
+/frontend/transition
+/frontend/animate
+/frontend/scratch/
+/frontend/test/*/samples/_
+/frontend/yarn-error.log
+_actual*.*
+_output
+/types
+.eslintcache
