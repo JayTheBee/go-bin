@@ -24,17 +24,7 @@ func checkPrivate(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).SendString("false")
 }
 
-func getAllGobins(c *fiber.Ctx) error {
-	gobins, err := model.GetAllGobins()
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "error getting all gobins " + err.Error(),
-		})
-	}
-	return c.Status(fiber.StatusOK).JSON(gobins)
-}
-
-func getGobin(c *fiber.Ctx) error {
+func checkPassword(c *fiber.Ctx) error {
 	c.Accepts("application/json")
 	//every get request has a url param and a password payload (default nil)
 	payload := struct {
@@ -47,6 +37,48 @@ func getGobin(c *fiber.Ctx) error {
 			"message": "error parsing JSON " + err.Error(),
 		})
 	}
+	// get model from param
+	url := c.Params("url")
+	x, err := model.FindByURL(url)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "error could not retreive gobin from db " + err.Error(),
+		})
+	}
+
+	//authenticate password
+	ok := utils.VerifyEncode(payload.Password, x.Password)
+	if ok {
+		return c.Status(fiber.StatusOK).SendString("true")
+	} else {
+		return c.Status(fiber.StatusOK).SendString("false")
+	}
+
+}
+
+func getAllGobins(c *fiber.Ctx) error {
+	gobins, err := model.GetAllGobins()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "error getting all gobins " + err.Error(),
+		})
+	}
+	return c.Status(fiber.StatusOK).JSON(gobins)
+}
+
+func getGobin(c *fiber.Ctx) error {
+	// c.Accepts("application/json")
+	// //every get request has a url param and a password payload (default nil)
+	// payload := struct {
+	// 	Password string `json:"password"`
+	// }{}
+	// // get payload
+	// err := c.BodyParser(&payload)
+	// if err != nil {
+	// 	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+	// 		"message": "error parsing JSON " + err.Error(),
+	// 	})
+	// }
 
 	//get param and check if gobin exists
 	url := c.Params("url")
@@ -59,13 +91,13 @@ func getGobin(c *fiber.Ctx) error {
 	}
 
 	//check privacy settings and authenticate password
-	if x.Private {
-		ok := utils.VerifyEncode(payload.Password, x.Password)
-		if !ok {
-			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-				"message": "wrong password"})
-		}
-	}
+	// if x.Private {
+	// 	ok := utils.VerifyEncode(payload.Password, x.Password)
+	// 	if !ok {
+	// 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+	// 			"message": "wrong password"})
+	// 	}
+	// }
 
 	x.Views += 1
 
@@ -164,7 +196,8 @@ func Setup() {
 	})
 
 	router.Get("/gobin", getAllGobins)
-	router.Get("/gobin/check/:url", checkPrivate)
+	router.Get("/gobin/checkvis/:url", checkPrivate)
+	router.Get("/gobin/checkpass/:url", checkPassword)
 	router.Get("/gobin/:url", getGobin)
 	router.Post("/gobin", createGobin)
 	router.Patch("/gobin", updateGobin)
