@@ -19,7 +19,8 @@ func checkPrivate(c *fiber.Ctx) error {
 		})
 	}
 	//check privacy settings and authenticate password
-	if x.Private {
+	fmt.Println("the password is ", x.Password)
+	if len(x.Password) > 0 {
 		return c.Status(fiber.StatusOK).SendString("true")
 	}
 	return c.Status(fiber.StatusOK).SendString("false")
@@ -69,20 +70,6 @@ func getAllGobins(c *fiber.Ctx) error {
 }
 
 func getGobin(c *fiber.Ctx) error {
-	// c.Accepts("application/json")
-	// //every get request has a url param and a password payload (default nil)
-	// payload := struct {
-	// 	Password string `json:"password"`
-	// }{}
-	// // get payload
-	// err := c.BodyParser(&payload)
-	// if err != nil {
-	// 	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-	// 		"message": "error parsing JSON " + err.Error(),
-	// 	})
-	// }
-
-	//get param and check if gobin exists
 	url := c.Params("url")
 	x, err := model.FindByURL(url)
 
@@ -91,15 +78,6 @@ func getGobin(c *fiber.Ctx) error {
 			"message": "error could not retreive gobin from db " + err.Error(),
 		})
 	}
-
-	//check privacy settings and authenticate password
-	// if x.Private {
-	// 	ok := utils.VerifyEncode(payload.Password, x.Password)
-	// 	if !ok {
-	// 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-	// 			"message": "wrong password"})
-	// 	}
-	// }
 
 	x.Views += 1
 
@@ -126,7 +104,7 @@ func createGobin(c *fiber.Ctx) error {
 
 	x.URL = utils.GenerateURL(8)
 	x.CreatedAt = time.Now()
-	if x.Private {
+	if len(x.Password) > 0 {
 		x.Password = utils.HashPassword(x.Password)
 	}
 	err = model.CreateGobin(x)

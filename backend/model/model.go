@@ -11,13 +11,13 @@ import (
 var db *gorm.DB
 
 type Gobin struct {
-	ID           uint      `json:"-" gorm:"primaryKey"`
-	URL          string    `json:"url" gorm:"unique;not null"`
-	Title        string    `json:"title" gorm:"default:Untitled"` //or untitled
-	Body         string    `json:"body" gorm:"not null"`
-	Views        uint      `json:"views" gorm:"default:0"` //incremental
-	Private      bool      `json:"private" gorm:"default:false"`
-	Password     string    `json:"password,omitempty"`
+	ID    uint   `json:"-" gorm:"primaryKey"`
+	URL   string `json:"url" gorm:"unique;not null"`
+	Title string `json:"title" gorm:"default:Untitled"` //or untitled
+	Body  string `json:"body" gorm:"not null"`
+	Views uint   `json:"views" gorm:"default:0"` //incremental
+	// Privacy      bool      `json:"privacy" gorm:"default:false"`
+	Password     string    `json:"password,omitempty" gorm:"default:null"`
 	CreatedAt    time.Time `json:"created" gorm:"not null"`
 	ExpiresAfter int64     `json:"expiry,omitempty" gorm:"type:int;default:-1"` //stored as minutes
 }

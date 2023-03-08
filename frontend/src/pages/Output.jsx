@@ -12,45 +12,129 @@ function Details ({paste}) {
 	return(
 		<>
 			<h3>feed</h3>
+			<p>url: {paste.url}</p>
 			<p>title: {paste.title}</p>
 			<p>body: {paste.body}</p>
-			<p>url: {paste.url}</p>
+			<p>created: {paste.created}</p>
+			<p>views: {paste.views}</p>
 		</>
 	)
 }
 
+function PrivateOutput({getData, paste}) {
+	const [passAlert, setPassAlert] = useState() //alert
+	const [err, setErr] = useState()		// password is empty, show warning
+	const [show, setShow] = useState(true) 		//show Modals, inverse with details
+	const [pass, setPass] = useState('')
+
+	const params = useParams()
+
+	const handleSubmit = async (e) => {
+		e.preventDefault()
+
+		if(pass === ""){
+			setErr(true)
+
+		}
+		else{
+			const config = {
+				headers: {
+				   'Content-Type': 'application/json',
+				} 
+			}	
+			axios.post(`http://localhost:3002/gobin/checkpass/${params.id}`, { password: pass }, config)
+			.then( (response) => {
+				setPass('')
+				console.log("resp data is ", response.data)
+				if(response.data){
+
+					// password is correct
+					setPassAlert(false)
+
+					// close down modal
+					setShow(false)
+
+					//get Data
+					getData()
+				}else{
+
+					//wrong password
+					setPassAlert(true)
+
+					// open modal
+				}
+			}).catch((err) => console.log(err))
+		}
+
+
+	}
+	return(
+		<>
+			<Modal show={show} >
+			<Modal.Header >
+				<Modal.Title>Paste Authentication</Modal.Title>
+			</Modal.Header>
+			<Modal.Body>
+
+				{passAlert && 
+				<>
+					<Alert variant="danger" onClose={() => setPassAlert(false)} dismissible>
+						<Alert.Heading>Incorrect Password!</Alert.Heading>
+					</Alert>
+				</>
+				
+				}
+				<Form noValidate className='mx-3' onSubmit={handleSubmit}>
+					<Form.Group className="mb-3" controlId="password">
+						<Form.Label>Enter Password</Form.Label>
+						<Form.Control isInvalid={err} type="password" placeholder="Password" value={pass} onChange={(e) => {setPass(e.target.value); setErr(false)}}/>
+						<Form.Control.Feedback type="invalid">
+							Please enter password before submitting.
+						</Form.Control.Feedback>
+					</Form.Group>	
+					
+					<Button variant="primary" type="submit" >
+						Submit
+					</Button>	
+				</Form>
+
+			</Modal.Body>
+			</Modal>
+
+			{!show && <Details paste={paste}/>}
+		</>
+	)
+	
+}
+
+
 
 function Output() {
-	const [correct, setCorrect] = useState(true)
-	const [valid, setValid] = useState(true)
+	const [priv, setPriv] = useState()
+	const params = useParams()
 
-	const [show, setShow] = useState(true)
 	const [paste, setPaste] = useState({
 		body: "",
 		created: "",
 		expiry: -1,
-		private: false,
 		title: "",
 		url: "",
 		views: 0
 	})
-	const [pass, setPass] = useState('')
-	const params = useParams()
 
-	let priv = true
+
+
 
 	const getVis = async () => {
 		try {
 			const { data } = await axios.get(`http://localhost:3002/gobin/checkvis/${params.id}`)
-			console.log("vis is ", data)
 			
-			if(data === "true") {
-				priv = true
+			if(data) {
+				setPriv(true)
 			}else{
-				priv = false
+				setPriv(false)
 				getData()
 			}
-
 		} catch (error) {
 			console.log("error is ", error)
 		}
@@ -59,7 +143,6 @@ function Output() {
 	const getData = async () => {
 		try {
 			const { data } = await axios.get(`http://localhost:3002/gobin/${params.id}`)
-			console.log("data is ", data)
 			setPaste(data)
 		} catch (error) {
 			console.log("error is ", error)
@@ -72,78 +155,23 @@ function Output() {
 		getVis()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
-	 
+	
 	if(priv){
-		const handleSubmit = async (e) => {
-			e.preventDefault()
-			if(pass === ""){
-				setValid(false)
-
-			}else{
-				const config = {
-					headers: {
-					   'Content-Type': 'application/json',
-					} 
-				}	
-				axios.post(`http://localhost:3002/gobin/checkpass/${params.id}`, { password: pass }, config)
-				.then( (response) => {
-					setPass('')
-					console.log("resp data is ", response.data)
-					if(response.data){
-						setCorrect(true)
-						setShow(false)
-						getData()
-					}else{
-						setCorrect(false)
-						setShow(true)
-					}
-				}).catch((err) => console.log(err))
-			}
-
-
-
-
-		}
-		return(
+		return (
 			<>
-				<Modal show={show} >
-				<Modal.Header >
-					<Modal.Title>Paste Authentication</Modal.Title>
-				</Modal.Header>
-				<Modal.Body>
-
-				{!correct && 
-				<>
-				     <Alert variant="danger" onClose={() => setCorrect(true)} dismissible>
-						<Alert.Heading>Incorrect Password!</Alert.Heading>
-					</Alert>
-				</>
-				
-				}
-				<Form noValidate className='mx-3' onSubmit={handleSubmit}>
-					<Form.Group className="mb-3" controlId="password">
-						<Form.Label>Enter Password</Form.Label>
-						<Form.Control isInvalid={!valid} type="password" placeholder="Password" value={pass} onChange={(e) => {setPass(e.target.value); setValid(true)}}/>
-						<Form.Control.Feedback type="invalid">
-							Please enter password before submitting.
-						</Form.Control.Feedback>
-					</Form.Group>	
-					
-					<Button variant="primary" type="submit" >
-						Submit
-					</Button>	
-				</Form>
-
-				</Modal.Body>
-				</Modal>
-
-				{!show && <Details paste={paste}/>}
+			{console.log("i am inside priv") }
+			<PrivateOutput getData={getData} paste={paste}/>
 			</>
 		)
-	}else{
+	}
 
-		return(<Details paste={paste}/>)
-}
+	return(
+		<>
+			{console.log("i am inside pub")}
+			<Details paste={paste}/>
+		</>
+	)
+
 
 	
 
