@@ -26,7 +26,7 @@ function FormDetails() {
 	 
 
 	const checkErrors = () => {
-		const { body } = form
+		const { body} = form
 		const priv = form.private 
 		if(!priv){
 			form.password = ""
@@ -35,13 +35,14 @@ function FormDetails() {
 			form.expiry = -1
 		}
 
-		if(!body) return false
+		if(body === "") return false
 		else return true
 	}
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		const errs = checkErrors()
+
 		if(!errs){
 			setValid(errs)
 		}

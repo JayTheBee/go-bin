@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/JayTheBee/go-bin/model"
@@ -27,6 +28,7 @@ func checkPrivate(c *fiber.Ctx) error {
 func checkPassword(c *fiber.Ctx) error {
 	c.Accepts("application/json")
 	//every get request has a url param and a password payload (default nil)
+	fmt.Println("raw body is", string(c.Body()))
 	payload := struct {
 		Password string `json:"password"`
 	}{}
@@ -197,7 +199,7 @@ func Setup() {
 
 	router.Get("/gobin", getAllGobins)
 	router.Get("/gobin/checkvis/:url", checkPrivate)
-	router.Get("/gobin/checkpass/:url", checkPassword)
+	router.Post("/gobin/checkpass/:url", checkPassword)
 	router.Get("/gobin/:url", getGobin)
 	router.Post("/gobin", createGobin)
 	router.Patch("/gobin", updateGobin)
