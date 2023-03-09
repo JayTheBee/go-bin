@@ -1,7 +1,6 @@
 package server
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/JayTheBee/go-bin/model"
@@ -19,7 +18,6 @@ func checkPrivate(c *fiber.Ctx) error {
 		})
 	}
 	//check privacy settings and authenticate password
-	fmt.Println("the password is ", x.Password)
 	if len(x.Password) > 0 {
 		return c.Status(fiber.StatusOK).SendString("true")
 	}
@@ -29,7 +27,6 @@ func checkPrivate(c *fiber.Ctx) error {
 func checkPassword(c *fiber.Ctx) error {
 	c.Accepts("application/json")
 	//every get request has a url param and a password payload (default nil)
-	fmt.Println("raw body is", string(c.Body()))
 	payload := struct {
 		Password string `json:"password"`
 	}{}

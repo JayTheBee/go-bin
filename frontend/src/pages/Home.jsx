@@ -1,6 +1,6 @@
 import NavbarBasic from "../components/Navbar";
 import FooterBasic from "../components/Footer";
-import BasicExample from "./FromDetails";
+import FormDetails from "../components/FromDetails";
 
 function Home() {
 	return(
@@ -8,7 +8,7 @@ function Home() {
 		<div className="d-flex flex-column vh-100">
 			{<NavbarBasic/>}
 			<main className="flex-grow-1">
-				{<BasicExample/>}
+				{<FormDetails/>}
 			</main>
 			{<FooterBasic/>}
 		</div>

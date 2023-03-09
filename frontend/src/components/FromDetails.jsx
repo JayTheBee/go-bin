@@ -3,6 +3,7 @@ import Form from 'react-bootstrap/Form';
 import { useState } from 'react';
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom';
+import Container from 'react-bootstrap/Container';
 
 
 
@@ -12,6 +13,7 @@ function FormDetails() {
 	const [errors, setErrors] =  useState({})
 	const [expire, setExpire] = useState(false)
 	const [vis, setVis] = useState(false)
+	const [dateHolder, setDateHolder] = useState('')
 
 	const [form, setForm] = useState({
 		title:"",
@@ -41,6 +43,23 @@ function FormDetails() {
 		}
 	}
 
+
+	const dateConverter = (timeEnd) => {
+		const newEndDate= new Date(timeEnd);
+		const minutes = 1000*60;
+		const result = Math.ceil((newEndDate.getTime()-Date.now())/(minutes))
+		console.log('date Converter result ', result)
+		if (result < 0 ) {return 0}
+		return result
+	   }
+	
+
+	const handleExpireDate = (value) => {
+		setDateHolder(value)
+		const expmins = dateConverter(value)
+		setForm({...form, expiry: expmins})
+	}
+
 	const checkErrors = () => {
 		const { body, expiry, password } = form
 		const newErrors = {}
@@ -53,10 +72,8 @@ function FormDetails() {
 		if ( !body || body === '' ) newErrors.body = 'Text cannot be blank!'
 		return newErrors
 
-
-
-
 	}
+		
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -72,10 +89,8 @@ function FormDetails() {
 		}
 
 		else{
-			console.log("logging in")
-			
+			console.log("logging in expiry is ", form.expiry)
 			console.log("payload form is ", form)
-
 			try {
 				const config = {
 					headers: {
@@ -89,12 +104,6 @@ function FormDetails() {
 
 				console.log("res is ", res)
 				console.log("res.data is ", res.data)
-				setForm({
-					title:"",
-					body:'',
-					password:'',
-					expiry:-1
-				})
 				
 				navigate('/' + res.data.url)
 
@@ -108,7 +117,9 @@ function FormDetails() {
 	   }
 	
   return (
-    <Form noValidate className='mx-3' onSubmit={handleSubmit}>
+
+<Container fluid className="mx-auto">
+	<Form noValidate className='mx-3' onSubmit={handleSubmit}>
       <Form.Group className="mb-3" controlId="title">
         <Form.Label>Title</Form.Label>
         <Form.Control type="email" placeholder="Optional title" value={form.title} onChange={(e) => setForm({...form, title: e.target.value})}/>
@@ -153,12 +164,13 @@ function FormDetails() {
 		<Form.Group className="mb-3" controlId="expiry">
 			<Form.Label>Expires by:</Form.Label>
 			<Form.Control
+				min={new Date().toISOString().slice(0, 10)}
 				isInvalid={!!errors.expiry}
 				type="date"
 				name="expiry"
 				placeholder="Expires by"
-				value={form.expiry}
-				onChange={(e) => setForm({...form, expiry: e.target.value})}
+				value={dateHolder}
+				onChange={(e) => handleExpireDate(e.target.value)}
 			/>
 			<Form.Control.Feedback type="invalid">
 			{ errors.expiry }
@@ -170,6 +182,9 @@ function FormDetails() {
         Submit
       </Button>
     </Form>
+</Container>
+
+    
   );
 }
 
