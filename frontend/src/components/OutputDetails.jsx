@@ -24,8 +24,8 @@ function Details ({paste}) {
 		<h3>{paste.title}</h3>
 			<CalendarDate color="royalblue" size={20} /> {createdDate} {createdTime}
 			<EyeFill color="royalblue" size={20} className="ms-3"/> {paste.views}
-			<Card className="mt-3" >
-				<ListGroup variant="flush">
+			<Card className="mt-3">
+				<ListGroup variant="flush" style={{minHeight: "50vh"}}>
 				<ListGroup.Item style={{ fontFamily: 'Courier New' }}>{paste.body}</ListGroup.Item>
 				</ListGroup>
 				{!(paste.expiry === -1) && <Card.Footer className="text-muted">Expires by: {expireDate.toLocaleDateString()} </Card.Footer>}
