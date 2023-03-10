@@ -57,7 +57,7 @@ function PrivateOutput({getData, paste}) {
 				   'Content-Type': 'application/json',
 				} 
 			}	
-			axios.post(`http://localhost:3002/gobin/checkpass/${params.id}`, { password: pass }, config)
+			axios.post(`${process.env.REACT_APP_BACKEND_ADDRESS}/gobin/checkpass/${params.id}`, { password: pass }, config)
 			.then( (response) => {
 				setPass('')
 				console.log("resp data is ", response.data)
@@ -142,7 +142,7 @@ function OutputDetails() {
 
 	const getVis = async () => {
 		try {
-			const { data } = await axios.get(`http://localhost:3002/gobin/checkvis/${params.id}`)
+			const { data } = await axios.get(`${process.env.REACT_APP_BACKEND_ADDRESS}/gobin/checkvis/${params.id}`)
 			
 			if(data) {
 				setPriv(true)
@@ -157,7 +157,7 @@ function OutputDetails() {
 
 	const getData = async () => {
 		try {
-			const { data } = await axios.get(`http://localhost:3002/gobin/${params.id}`)
+			const { data } = await axios.get(`${process.env.REACT_APP_BACKEND_ADDRESS}/gobin/${params.id}`)
 			setPaste(data)
 		} catch (error) {
 			console.log("error is ", error)

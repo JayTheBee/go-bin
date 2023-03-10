@@ -1,7 +1,9 @@
 package model
 
 import (
+	"fmt"
 	"log"
+	"os"
 	"time"
 
 	"gorm.io/driver/postgres"
@@ -23,9 +25,14 @@ type Gobin struct {
 }
 
 func Setup() {
-
-	dsn := "host=192.168.100.219 port=5432 user=admin password=8723 dbname=admin port=5432 sslmode=disable"
+	// dsn := "host=192.168.100.219 port=5432 user=admin password=8723 dbname=admin sslmode=disable"
 	var err error
+	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+		os.Getenv("DB_ADDRESS"),
+		os.Getenv("DB_PORT"),
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_NAME"))
 	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err)

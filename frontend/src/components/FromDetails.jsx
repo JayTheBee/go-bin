@@ -79,7 +79,6 @@ function FormDetails() {
 		e.preventDefault();
 
 		const errs = checkErrors()
-
 		console.log("errors is" , errors)
 		console.log("expire is ", expire)
 		console.log("form is ", form)
@@ -100,7 +99,7 @@ function FormDetails() {
 				console.log("logging in")
 				console.log("payload form is ", form)		
 
-				const res = await axios.post('http://localhost:3002/gobin', form, config)
+				const res = await axios.post(`${process.env.REACT_APP_BACKEND_ADDRESS}/gobin`, form, config)
 
 				console.log("res is ", res)
 				console.log("res.data is ", res.data)

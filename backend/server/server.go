@@ -1,6 +1,8 @@
 package server
 
 import (
+	"log"
+	"os"
 	"time"
 
 	"github.com/JayTheBee/go-bin/model"
@@ -180,6 +182,9 @@ func Setup() {
 	router.Patch("/gobin", updateGobin)
 	router.Delete("/gobin/:url", deleteGobin)
 
-	router.Listen(":3002")
+	err := router.Listen(":" + os.Getenv("GO_PORT"))
+	if err != nil {
+		log.Fatal(err)
+	}
 
 }
