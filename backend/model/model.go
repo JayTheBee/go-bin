@@ -3,9 +3,9 @@ package model
 import (
 	"fmt"
 	"log"
-	"os"
 	"time"
 
+	"github.com/JayTheBee/go-bin/utils"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -28,11 +28,11 @@ func Setup() {
 	// dsn := "host=192.168.100.219 port=5432 user=admin password=8723 dbname=admin sslmode=disable"
 	var err error
 	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-		os.Getenv("DB_ADDRESS"),
-		os.Getenv("DB_PORT"),
-		os.Getenv("DB_USER"),
-		os.Getenv("DB_PASSWORD"),
-		os.Getenv("DB_NAME"))
+		utils.GetEnv("DB_ADDRESS", "127.0.0.1"),
+		utils.GetEnv("DB_PORT", "5432"),
+		utils.GetEnv("DB_USER", "admin"),
+		utils.GetEnv("DB_PASSWORD", "1234"),
+		utils.GetEnv("DB_NAME", "admin"))
 	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err)

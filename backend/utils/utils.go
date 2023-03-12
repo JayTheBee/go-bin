@@ -2,6 +2,7 @@ package utils
 
 import (
 	"math/rand"
+	"os"
 
 	"github.com/matthewhartstonge/argon2"
 )
@@ -34,6 +35,13 @@ func VerifyEncode(pass string, encode string) bool {
 		panic(err) // 💥
 	}
 	return ok
+}
+
+func GetEnv(key, fallback string) string {
+	if value, ok := os.LookupEnv(key); ok {
+		return value
+	}
+	return fallback
 }
 
 // // only parsing until minutes

@@ -2,13 +2,13 @@ package server
 
 import (
 	"log"
-	"os"
 	"time"
 
 	"github.com/JayTheBee/go-bin/model"
 	"github.com/JayTheBee/go-bin/utils"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 )
 
 func checkPrivate(c *fiber.Ctx) error {
@@ -170,6 +170,9 @@ func Setup() {
 		AllowOrigins: "*",
 		AllowHeaders: "Origin, Content-Type, Accept",
 	}))
+	router.Use(
+		logger.New(), // add Logger middleware
+	)
 	router.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World!")
 	})
@@ -182,7 +185,7 @@ func Setup() {
 	router.Patch("/gobin", updateGobin)
 	router.Delete("/gobin/:url", deleteGobin)
 
-	err := router.Listen(":" + os.Getenv("GO_PORT"))
+	err := router.Listen(":" + utils.GetEnv("GO_PORT", "8080"))
 	if err != nil {
 		log.Fatal(err)
 	}
