@@ -7,9 +7,9 @@ COPY go.mod ./
 COPY go.sum ./
 RUN go mod download
 
-ADD model ./model
-ADD server ./server
-ADD utils ./utils
+COPY model ./model
+COPY server ./server
+COPY utils ./utils
 
 COPY *.go ./
 

@@ -1,22 +1,39 @@
 version: "3"
 services:
-  
+
+  app:
+    container_name: gobin-react
+    build:
+      context: ./frontend
+      target: development
+      args:
+        REACT_APP_BACKEND_ADDRESS: http://localhost:8500
+    volumes:
+      - ./frontend/src:/app/src
+    restart: unless-stopped
+    depends_on:
+      - api
+      - db  
+    ports:
+      - 3003:3000
+
+
   api:
     build:
       context: ./backend
     #image: go-bin:latest
-    container_name: gobin
+    container_name: gobin-api
     environment:
       - DB_ADDRESS=gobin-db
       - DB_PORT=5432
       - DB_USER=admin
       - DB_PASSWORD=8723
       - DB_NAME=go-bin_demo
-      - GO_PORT=3002
+      - GO_PORT=8500
    # env_file:
    #   - ./backend/.env
     ports:
-      - 3002:3002
+      - 8500:8500
     restart: unless-stopped
     depends_on:
       - db    
@@ -34,3 +51,4 @@ services:
       POSTGRES_DB: go-bin_demo
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER"]
+
